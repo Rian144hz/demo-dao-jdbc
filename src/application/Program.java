@@ -68,5 +68,8 @@ public class Program {
             e.printStackTrace();
         }
 
+        System.out.println("==== Test 6 delete ====");
+        sellerDao.deleteById(8);
+
     }
 }
