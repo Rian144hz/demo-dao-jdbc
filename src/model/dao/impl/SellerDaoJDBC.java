@@ -1,6 +1,7 @@
 package model.dao.impl;
 
 import db.DB;
+import db.DbException;
 import model.dao.SellerDao;
 import model.entities.Department;
 import model.entities.Seller;
@@ -9,7 +10,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class SellerDaoJDBC implements SellerDao {
@@ -23,11 +27,49 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public void insert(Seller seller) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/YYYY");
+        PreparedStatement st = null;
+        try {
+            st = conn.prepareStatement(
+                    "INSERT INTO seller\n" +
+                            "(Name, Email, BirthDate, BaseSalary, DepartmentId)\n" +
+                            "VALUES\n" +
+                            "(?, ?, ?, ?, ?)"
+            );
+            st.setString(1,seller.getName());
+            st.setString(2,seller.getEmail());
+            st.setDate(3,new java.sql.Date(seller.getBirthDate().getTime()));
+            st.setDouble(4,seller.getBaseSalary());
+            st.setInt(5,seller.getDepartment().getId());
 
+
+            st.executeUpdate();
+            System.out.println("Done!");
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void update(Seller seller) {
+        PreparedStatement st = null;
+        try {
+            st = conn.prepareStatement(
+                    "UPDATE seller\n " +
+                            "SET Name = ?, Email = ?, BirthDate = ?, BaseSalary = ?, DepartmentId = ?\n " +
+                            "WHERE Id = ? "
+            );
+            st.setString(1,seller.getName());
+            st.setString(2,seller.getEmail());
+            st.setDate(3,new java.sql.Date(seller.getBirthDate().getTime()));
+            st.setDouble(4,seller.getBaseSalary());
+            st.setInt(5,seller.getDepartment().getId());
+            st.setInt(6, seller.getId());
+            st.executeUpdate();
+            System.out.println("Done! uptade birthDate!");
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
 
     }
 
