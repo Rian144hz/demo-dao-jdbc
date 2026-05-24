@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SellerDaoJDBC implements SellerDao {
@@ -76,4 +77,52 @@ public class SellerDaoJDBC implements SellerDao {
     public List<Seller> findAll() {
         return List.of();
     }
-}
+
+    @Override
+    public List<Seller> findDepartment(Department department) {
+        PreparedStatement st = null;
+        ResultSet rs = null;
+
+        try {
+            st = conn.prepareStatement(
+                    "SELECT seller.*,department.Name as DepName\n" +
+                            "FROM seller INNER JOIN department\n" +
+                            "ON seller.DepartmentId = department.Id\n" +
+                            "WHERE DepartmentId = ?\n" +
+                            "ORDER BY Name"
+            );
+            st.setInt(1,department.getId());
+            rs = st.executeQuery();
+
+            List<Seller> list = new ArrayList<>();
+            Department dp = new Department();
+            boolean hasDepartmentData = false;
+            while (rs.next()){
+                if (!hasDepartmentData) {
+                    dp.setId(rs.getInt("DepartmentId"));
+                    dp.setName(rs.getString("DepName"));
+                    hasDepartmentData = true;
+                }
+                Seller sel = new Seller();
+                sel.setId(rs.getInt("Id"));
+                sel.setName(rs.getString("Name"));
+                sel.setEmail(rs.getString("Email"));
+                sel.setBaseSalary(rs.getDouble("BaseSalary"));
+                sel.setBirthDate(rs.getDate("BirthDate"));
+                sel.setDepartment(dp);
+
+                list.add(sel);
+
+            }
+            return list;
+        }catch (SQLException e){
+            e.printStackTrace();;
+        }finally {
+            DB.closeStatement(st);
+            DB.closeResultSet(rs);
+        }
+        return null;
+    }
+
+    }
+
