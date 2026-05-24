@@ -29,7 +29,7 @@ O mapeamento objeto-relacional manual via JDBC cobre os seguintes métodos de pe
 
 ## Tecnologias e Ambiente de Desenvolvimento
 
-* **Linguagem:** Java (JDK 17)
+* **Linguagem:** Java (JDK 21)
 * **Ambiente de Execução:** Ubuntu Linux
 * **IDE:** IntelliJ IDEA
 * **Banco de Dados:** MySQL Server
